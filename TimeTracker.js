@@ -1,26 +1,35 @@
-import React from 'react';
+import React, { useState } from "react";
+import EmployeeList from "./EmployeeList";
 
- 
-const TimeTracker = ({ employee, onStatusChange }) => {
+const TimeTracker = () => {
+  const [employees, setEmployees] = useState([
+    { name: "Cathy", isClockedIn: false, lastRecordedTime: null },
+    { name: "Alysa", isClockedIn: false, lastRecordedTime: null },
+    { name: "Lim", isClockedIn: false, lastRecordedTime: null }
+  ]);
 
-  // Function to handle clocking in and out
-  const handleClockToggle = () => {
-    const currentTime = new Date();
-    const timestamp = currentTime.toLocaleTimeString();
-    onStatusChange(employee.name, currentTime, timestamp);
+  const toggleClockStatus = (index) => {
+    setEmployees((prevEmployees) =>
+      prevEmployees.map((employee, idx) => {
+        if (idx === index) {
+          const now = new Date().toLocaleTimeString();
+          return {
+            ...employee,
+            isClockedIn: !employee.isClockedIn,
+            lastRecordedTime: employee.isClockedIn ? null : now,
+          };
+        }
+        return employee;
+      })
+    );
   };
 
   return (
-    <div className="time-tracker mb-4">
-      <button
-        onClick={handleClockToggle}
-        className={`btn ${employee.isClockedIn ? 'bg-red-500' : 'bg-green-500'} text-white p-2 rounded`}
-      >
-        {employee.isClockedIn ? 'Clock Out' : 'Clock In'}
-      </button>
+    <div>
+      <h1>Employee Time Tracker</h1>
+      <EmployeeList employees={employees} onToggleClock={toggleClockStatus} />
     </div>
   );
 };
 
 export default TimeTracker;
-
